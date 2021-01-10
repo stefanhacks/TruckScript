@@ -1,0 +1,9 @@
+# Parcel
+.cache
+dist
+
+# NPM
+node_modules
+
+# Extras
+/ignore
