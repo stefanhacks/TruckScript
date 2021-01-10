@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #a1c1ff;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  align-self: center;
+}
+
+.game-container {
+  border: gray 2px solid;
+  box-shadow: black 0px 0px 5px;
+  background-color: #333333;
+}
