@@ -1,8 +1,7 @@
 import { Vector2 } from '~scripts/types/physics';
 import { Button } from '../types/gui';
-import { Bootable } from '../types/interfaces';
 
-export default class MouseTracker implements Bootable {
+export default class MouseTracker {
   // #region Vars
   private canvas: HTMLCanvasElement;
 
@@ -12,11 +11,6 @@ export default class MouseTracker implements Bootable {
   // #region Constructor
   public constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-  }
-  // #endregion
-
-  // #region Lifecycle: 0
-  public setup(): void {
     this.canvas.addEventListener('mousedown', (e: MouseEvent) => this.mouseClick(e), false);
     this.clickables = [];
   }

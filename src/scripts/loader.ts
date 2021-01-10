@@ -14,11 +14,6 @@ export default class Loader implements Bootable {
   // #region Constructor
   public constructor(context: CanvasRenderingContext2D) {
     this.context = context;
-  }
-  // #endregion
-
-  // #region Lifecycle: 0
-  public setup(): void {
     this.makeLabel();
   }
 
@@ -36,7 +31,7 @@ export default class Loader implements Bootable {
   }
   // #endregion
 
-  // #region Lifecycle: 1
+  // #region Lifecycle: 0
   public boot(): void {
     this.doLoad();
   }
