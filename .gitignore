@@ -7,3 +7,6 @@ node_modules
 
 # Extras
 /ignore
+
+# Greensock
+gsap-bonus.tgz
