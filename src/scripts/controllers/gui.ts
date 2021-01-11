@@ -4,7 +4,7 @@ import DataManager from './datamanager';
 
 import { Business, Job } from '../models/jobs';
 import { PlayerData } from '../models/playerdata';
-import { TITLE, LINE, MONEY, BUTTON, LAYOUT, NAME, PROFIT } from '../models/guielements';
+import { TITLE, LINE, MONEY, BUTTON_SIZE, LAYOUT, NAME, PROFIT } from '../models/guielements';
 
 import { LineElement } from '../types/elements';
 import writeText from '../utils/write';
@@ -40,7 +40,9 @@ export default class GUI {
     writeText(this.context, TITLE, { x: 20, y: 40 });
     writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
   }
+  // #endregion
 
+  // #region Draw Methods
   /**
    * Clears context.
    */
@@ -73,15 +75,20 @@ export default class GUI {
     });
   }
 
+  /**
+   * Draws a single button for a given player/key combo.
+   * @param player PlayerData object.
+   * @param key Business key object, to which to draw with.
+   */
   private drawButton(player: PlayerData, key: Business): void {
     const { anchor: layoutAnchor, span } = LAYOUT;
 
-    const offset = BUTTON.width + span.x;
+    const offset = BUTTON_SIZE.width + span.x;
     const oddOffset = Math.floor(key % 2) === 0 ? 0 : offset;
     const lastOffset = key === this.dataManager.availableJobs.size - 1 ? offset / 2 : 0;
 
     const x = layoutAnchor.x + oddOffset + lastOffset;
-    const y = layoutAnchor.y + (BUTTON.height + span.y) * Math.floor(key / 2);
+    const y = layoutAnchor.y + (BUTTON_SIZE.height + span.y) * Math.floor(key / 2);
     const position = { x, y };
 
     this.drawBorder(position, lastOffset);
@@ -89,6 +96,11 @@ export default class GUI {
     this.drawInfo(position, key, player, lastOffset);
   }
 
+  /**
+   * Draws a sprite after fetching it and its coordinates. Assumes sprite has been loaded.
+   * @param position Vector2, position to draw it in.
+   * @param key Business key to draw truck of.
+   */
   private drawTruck(position: Vector2, key: Business): void {
     const { anchor, size } = JOB_SHEET_COORDS[key];
     const { srcOffset } = LAYOUT;
@@ -105,24 +117,35 @@ export default class GUI {
     );
   }
 
-  private drawBorder(position: Vector2, lastOffset: number): void {
+  /**
+   * Possibly temporary, draws a gray border around button.
+   * @param position Vector2, position to draw it in.
+   * @param offset Adds to button's horizontal position.
+   */
+  private drawBorder(position: Vector2, offset: number): void {
     this.context.beginPath();
-    this.context.rect(position.x - lastOffset / 2, position.y, BUTTON.width + lastOffset, BUTTON.height);
+    this.context.rect(position.x - offset / 2, position.y, BUTTON_SIZE.width + offset, BUTTON_SIZE.height);
     this.context.stroke();
   }
 
-  private drawInfo(position: Vector2, key: Business, player: PlayerData, lastOffset: number): void {
+  /**
+   * Draws Business and player information for a given key.
+   * @param position Vector2, position to draw it in.
+   * @param key Business key to draw info of.
+   * @param player PlayerData object.
+   * @param offset Adds to button's horizontal position.
+   */
+  private drawInfo(position: Vector2, key: Business, player: PlayerData, offset: number): void {
     const { nameOffset, profitOffset } = LAYOUT;
     const jobInfo = this.dataManager.availableJobs.get(key);
 
-    const namePos = { x: position.x + nameOffset.x + lastOffset / 2, y: position.y + nameOffset.y };
+    const namePos = { x: position.x + nameOffset.x + offset / 2, y: position.y + nameOffset.y };
     writeText(this.context, NAME, namePos, jobInfo.name);
 
-    const profitPosition = { x: position.x + profitOffset.x + lastOffset / 2, y: position.y + profitOffset.y };
+    const profitPosition = { x: position.x + profitOffset.x + offset / 2, y: position.y + profitOffset.y };
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
     const profit = `${jobInfo.profit} × ${amount}`;
     writeText(this.context, PROFIT, profitPosition, profit);
   }
-
   // #endregion
 }

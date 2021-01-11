@@ -21,11 +21,22 @@ export const MONEY: LabelElement = {
   align: 'right',
 };
 
-export const NAME: LabelElement = { fontSize: 18, content: '', align: 'right' };
+export const NAME: LabelElement = {
+  fontSize: 18,
+  content: '',
+  align: 'right',
+};
 
-export const PROFIT: LabelElement = { fontSize: 16, content: `Profit: T$`, align: 'right' };
+export const PROFIT: LabelElement = {
+  fontSize: 16,
+  content: `Profit: T$`,
+  align: 'right',
+};
 
-export const BUTTON: Size = { height: 80, width: 280 };
+export const BUTTON_SIZE: Size = {
+  height: 80,
+  width: 280,
+};
 
 export const LAYOUT: ButtonLayout = {
   anchor: { x: 30, y: 90 },
