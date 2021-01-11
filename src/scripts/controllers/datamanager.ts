@@ -1,4 +1,4 @@
-import { PlayerData } from '../types/playerdata';
+import { newPlayer, PlayerData } from '../types/playerdata';
 
 export default class DataManager {
   // #region Vars
@@ -8,7 +8,7 @@ export default class DataManager {
   // #region Lifecycle: 0
   public constructor() {
     this.data = JSON.parse(window.localStorage.getItem('stTruckerSave'));
-    if (this.data === null || this.data === undefined) this.data = { money: 0 };
+    if (this.data === null || this.data === undefined) this.data = newPlayer();
 
     this.save();
   }

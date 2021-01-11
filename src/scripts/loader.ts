@@ -1,7 +1,6 @@
 import { VIEW_SIZE } from '../game';
-import { Bootable } from './types/interfaces';
 
-export default class Loader implements Bootable {
+export default class Loader {
   // #region Vars
   private context: CanvasRenderingContext2D;
 
@@ -15,6 +14,7 @@ export default class Loader implements Bootable {
   public constructor(context: CanvasRenderingContext2D) {
     this.context = context;
     this.makeLabel();
+    this.doLoad();
   }
 
   /**
@@ -28,12 +28,6 @@ export default class Loader implements Bootable {
 
     const { width, height } = VIEW_SIZE;
     this.context.fillText(`loading...`, width / 2, height / 2);
-  }
-  // #endregion
-
-  // #region Lifecycle: 0
-  public boot(): void {
-    this.doLoad();
   }
 
   /**

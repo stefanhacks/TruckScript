@@ -1,7 +1,6 @@
-import { Bootable } from '../types/interfaces';
 import DataManager from './datamanager';
 
-export default class TimeTracker implements Bootable {
+export default class TimeTracker {
   // #region Vars
   public lastTimeCycle: number;
 
@@ -15,6 +14,7 @@ export default class TimeTracker implements Bootable {
     this.dataManager = data;
     this.lastTimeCycle = Date.now();
     this.syncTime();
+    this.setIntervals();
   }
   // #endregion
 
@@ -24,14 +24,15 @@ export default class TimeTracker implements Bootable {
   private async syncTime(): Promise<void> {
     const response = await fetch('http://worldclockapi.com/api/json/utc/now');
     if (response.status === 200) {
-      const data = await response.json();
-      this.syncedTimeCycle = ((data as unknown) as Record<string, unknown>).currentFileTime as number;
+      const data = (await response.json()) as Record<string, unknown>;
+      this.syncedTimeCycle = data.currentFileTime as number;
     }
   }
-  // #endregion
 
-  // #region Lifecycle: 0
-  public boot(): void {
+  /**
+   * Readies time interval events in the window component.
+   */
+  public setIntervals(): void {
     window.setInterval(() => this.tickTime(), 1000);
     window.setInterval(() => this.dataManager.save(), 15000);
   }

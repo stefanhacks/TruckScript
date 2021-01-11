@@ -12,6 +12,10 @@ export class Game {
 
   private context: CanvasRenderingContext2D;
 
+  private timer: TimeTracker;
+
+  private loader: Loader;
+
   private mouser: MouseTracker;
   // #endregion
 
@@ -28,12 +32,9 @@ export class Game {
    */
   public async boot(): Promise<void> {
     const data = new DataManager();
-    const timer = new TimeTracker(data);
-    const loader = new Loader(this.context);
+    this.timer = new TimeTracker(data);
+    this.loader = new Loader(this.context);
     this.mouser = new MouseTracker(this.canvas);
-
-    timer.boot();
-    loader.boot();
   }
   // #endregion
 }
