@@ -7,12 +7,20 @@
 #### Status
 🚛🚧 In progress.
 
+#### Layers
+- ✔ Save/Load
+- ✔ Job Structure
+- ✔ Job Cycle
+- ❌ Basic GUI / Buttons
+- ❌ Manager Unlocks
+- ❌ Show Time
+- ❌ Extra: Cheat Detection
 
 #### Features
 - ❌ Buy and upgrade businesses.
-- ❌ Delayed make money from a business.
-- ❌ Managers, businessess are ran automatically.
-- ❌ Save/Load progress + keep track of time passed.
+- ✔ Delayed make money from a business.
+- ✔ Managers, businessess are ran automatically.
+- ✔ Save/Load progress + keep track of time passed.
 
 
 -----
@@ -25,7 +33,7 @@
 - 🐺 [Husky](https://typicode.github.io/husky/#/), to enforce Eslint on hooks.
 
 #### How to: Dev
-- Get the free [Greensock](greensock.com/) tarball and leave the bonus tgz (gsap-bonus.tgz) in the main dir.
+- Get the free [GreenSock](greensock.com/) tarball and leave the bonus tgz (gsap-bonus.tgz) in the main dir.
 - `npm install` to install all dev dependencies.
 
 #### How to: Run

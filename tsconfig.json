@@ -6,6 +6,7 @@
     "paths": {
       "~*": ["./*"]
     },
+    "downlevelIteration": true
   },
   "include": ["src/**/*", ".d.ts"]
 }
