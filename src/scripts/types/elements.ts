@@ -1,11 +1,11 @@
-import { BoundingBox, Size, Vector2 } from './physics';
+import { BoundingBox, Vector2 } from './physics';
 
 export type Button = { box: BoundingBox; callback: () => void };
 
-export type TextElement = {
+export type LabelElement = {
   content: string;
-  position: Vector2;
-  font?: string;
+  fontSize?: number;
+  fontFamily?: string;
   fillStyle?: string;
   align?: CanvasTextAlign;
 };
@@ -16,7 +16,10 @@ export type LineElement = {
   end: Vector2;
 };
 
-export type JobBoxElement = {
-  box: BoundingBox;
-  sprite: { anchor: Vector2; size: Size };
+export type ButtonLayout = {
+  anchor: Vector2;
+  span: Vector2;
+  srcOffset: Vector2;
+  nameOffset: Vector2;
+  profitOffset: Vector2;
 };

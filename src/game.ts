@@ -12,15 +12,7 @@ export class Game {
   private canvas: HTMLCanvasElement;
 
   private context: CanvasRenderingContext2D;
-
-  private timer: TimeTracker;
-
-  private loader: Loader;
-
-  private mouser: MouseTracker;
-
   // #endregion
-  private gui: GUI;
 
   // #region Constructor
   public constructor() {
@@ -35,13 +27,19 @@ export class Game {
    */
   public async boot(): Promise<void> {
     const data = new DataManager();
-    this.timer = new TimeTracker(data);
+    const timer = new TimeTracker(data);
 
-    this.loader = new Loader(this.context);
-    this.mouser = new MouseTracker(this.canvas);
-    this.gui = new GUI(this.context, this.mouser);
+    const loader = new Loader(this.context);
+    const mouser = new MouseTracker(this.canvas);
+    const gui = new GUI(this.context, mouser, data);
 
-    this.loader.doLoad().then(() => this.gui.drawGUI());
+    loader.doLoad().then(() => {
+      timer.addSubscriber(() => data.manageJobCycle());
+      timer.addSubscriber(() => gui.drawGUI(data.playerData));
+      timer.startTicking();
+
+      gui.drawGUI(data.playerData);
+    });
   }
   // #endregion
 }

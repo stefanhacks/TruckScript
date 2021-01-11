@@ -1,6 +1,6 @@
-import { BusinessType } from './jobs';
+import { Business } from './jobs';
 
-export type PlayerJob = {
+export type JobStats = {
   amount: number;
   managed: boolean;
   time?: number;
@@ -9,7 +9,7 @@ export type PlayerJob = {
 export type PlayerData = {
   money: number;
   lastTime: number;
-  jobs: { [id in BusinessType]?: PlayerJob };
+  jobStats: { [id in Business]?: JobStats };
 };
 
 /**
@@ -19,6 +19,6 @@ export function newPlayer(): PlayerData {
   return {
     money: 0,
     lastTime: Date.now(),
-    jobs: { [BusinessType.Newspaper]: { amount: 1, managed: true } },
+    jobStats: { [Business.HotDog]: { amount: 1, managed: true, time: 5000 } },
   } as PlayerData;
 }

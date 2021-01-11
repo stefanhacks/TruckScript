@@ -1,33 +1,36 @@
-import { Vector2 } from '../types/physics';
-import { TextElement, LineElement, JobBoxElement } from '../types/elements';
+import { Size } from '../types/physics';
+import { ButtonLayout, LabelElement, LineElement } from '../types/elements';
 
-export const TITLE_SPECS: TextElement = {
-  font: '30px system-ui',
+export const TITLE: LabelElement = {
+  fontSize: 30,
   fillStyle: 'white',
   content: 'TS Trucker',
   align: 'left',
-  position: { x: 20, y: 40 } as Vector2,
 };
 
-export const TITLE_LINE_SPECS: LineElement = {
+export const LINE: LineElement = {
   fillStyle: 'white',
   start: { x: 20, y: 60 },
   end: { x: 700, y: 60 },
 };
 
-export const BUTTON_SPECS: LineElement = {
+export const MONEY: LabelElement = {
+  fontSize: 30,
   fillStyle: 'white',
-  start: { x: 20, y: 60 },
-  end: { x: 700, y: 60 },
+  content: 'T$',
+  align: 'right',
 };
 
-export const MAIL_SPECS: JobBoxElement = {
-  box: [
-    { x: 0, y: 0 },
-    { x: 500, y: 60 },
-  ],
-  sprite: {
-    anchor: { x: 246, y: 402 },
-    size: { width: 105, height: 55 },
-  },
+export const NAME: LabelElement = { fontSize: 18, content: '', align: 'right' };
+
+export const PROFIT: LabelElement = { fontSize: 16, content: `Profit: T$`, align: 'right' };
+
+export const BUTTON: Size = { height: 80, width: 280 };
+
+export const LAYOUT: ButtonLayout = {
+  anchor: { x: 30, y: 90 },
+  span: { x: 100, y: 30 },
+  srcOffset: { x: 15, y: 20 },
+  nameOffset: { x: 268, y: 25 },
+  profitOffset: { x: 268, y: 46 },
 };
