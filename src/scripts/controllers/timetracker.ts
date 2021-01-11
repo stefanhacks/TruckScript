@@ -1,5 +1,9 @@
 import DataManager from './datamanager';
 
+export const JOB_CYCLE = 1000;
+
+export const SAVE_CYCLE = 15000;
+
 export default class TimeTracker {
   // #region Vars
   public lastTimeCycle: number;
@@ -33,8 +37,8 @@ export default class TimeTracker {
    * Readies time interval events in the window component.
    */
   public setIntervals(): void {
-    window.setInterval(() => this.tickTime(), 1000);
-    window.setInterval(() => this.dataManager.save(), 15000);
+    window.setInterval(() => this.tickTime(), JOB_CYCLE);
+    window.setInterval(() => this.dataManager.save(), SAVE_CYCLE);
   }
 
   /**
