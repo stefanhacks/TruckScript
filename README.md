@@ -7,11 +7,19 @@
 #### Status
 🚛🚧 In progress.
 
+#### Layers
+- ✔ Save/Load
+- ✔ Job Structure
+- ✔ Job Cycle
+- ❌ Basic GUI / Buttons
+- ❌ Manager Unlocks
+- ❌ Show Time
+- ❌ Extra: Cheat Detection
 
 #### Features
 - ❌ Buy and upgrade businesses.
-- ❌ Delayed make money from a business.
-- ❌ Managers, businessess are ran automatically.
+- ✔ Delayed make money from a business.
+- ✔ Managers, businessess are ran automatically.
 - ✔ Save/Load progress + keep track of time passed.
 
 
