@@ -1,8 +1,8 @@
 export enum BusinessType {
   Newspaper = 0,
-  Mail = 1,
-  InterState = 2,
-  LongDistance = 3,
+  HotDog = 1,
+  Packages = 2,
+  InterState = 3,
   Fragile = 4,
   Chemicals = 5,
   Military = 6,

@@ -1,12 +1,18 @@
 import { VIEW_SIZE } from '../game';
+import { TextElement } from './types/elements';
+import { drawText } from './utils/draw';
+import { SpriteSheet } from './utils/imagebundler';
 
 export default class Loader {
   // #region Vars
   private context: CanvasRenderingContext2D;
 
-  private labelSpecs: Record<string, string> = {
+  private labelSpecs: TextElement = {
+    content: 'loading...',
     font: '20px system-ui',
+    align: 'center',
     fillStyle: 'white',
+    position: { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 },
   };
   // #endregion
 
@@ -14,27 +20,27 @@ export default class Loader {
   public constructor(context: CanvasRenderingContext2D) {
     this.context = context;
     this.makeLabel();
-    this.doLoad();
   }
 
   /**
    * Makes the loading label.
    */
   private makeLabel(): void {
-    const { font, fillStyle } = this.labelSpecs;
-    this.context.font = font;
-    this.context.fillStyle = fillStyle;
-    this.context.textAlign = 'center';
-
-    const { width, height } = VIEW_SIZE;
-    this.context.fillText(`loading...`, width / 2, height / 2);
+    drawText(this.context, this.labelSpecs);
   }
 
   /**
    * Actually loads assets.
    */
-  public doLoad(): void {
-    //
+  public async doLoad(): Promise<void> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = SpriteSheet.url;
+      img.onload = () => {
+        SpriteSheet.data = img;
+        resolve();
+      };
+    });
   }
   // #endregion
 }

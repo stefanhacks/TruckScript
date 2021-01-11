@@ -1,5 +1,5 @@
-import { Vector2 } from '~scripts/types/physics';
-import { Button } from '../types/gui';
+import { Vector2 } from '../types/physics';
+import { Button } from '../types/elements';
 
 export default class MouseTracker {
   // #region Vars
