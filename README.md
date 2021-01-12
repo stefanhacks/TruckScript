@@ -1,4 +1,4 @@
-# TruckScript
+# [TruckManager](https://stefantrucks.netlify.app)
 
 ### A basic, semi-pure, typescript [Capitalist Adventure](http://en.gameslol.net/adventure-capitalist-1086.html) clone, dev'd as a challenge and to get a better native hold of the language, keeping beneath 16hr mark.
 
@@ -6,6 +6,9 @@
 
 #### Status
 🚛🚧 In progress.
+
+#### CI:
+- 🔗 [Link](https://stefantrucks.netlify.app)
 
 #### Layers
 - ✔ Save/Load
@@ -31,6 +34,7 @@
 - 💎 [Eslint](eslint.org)/[Tslint](https://github.com/typescript-eslint/typescript-eslint) + [Prettier](https://prettier.io), to keep things orderly.
 - 🦸‍♀️ [GreenSock](https://greensock.com), for animations.
 - 🐺 [Husky](https://typicode.github.io/husky/#/), to enforce Eslint on hooks.
+- 🚇[Netlify](app.netlify.com), as CI.
 
 #### How to: Dev
 - Get the free [GreenSock](greensock.com/) tarball and leave the bonus tgz (gsap-bonus.tgz) in the main dir.
