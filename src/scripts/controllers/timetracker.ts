@@ -1,6 +1,6 @@
 import DataManager from './datamanager';
 
-export const JOB_CYCLE = 1000;
+export const JOB_CYCLE = 200;
 
 export const SAVE_CYCLE = 5000;
 

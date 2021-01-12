@@ -34,7 +34,8 @@ export default class DataManager {
       if (Number.isNaN(+key) === false) {
         const newJob = makeJob(+key);
         this.availableJobs.set(+key, newJob);
-        if (jobStats[key] !== undefined && jobStats[key].managed === true) this.runningJobs.push(newJob);
+        if (jobStats[key] !== undefined && (jobStats[key].managed === true || jobStats[key].time > 0))
+          this.runningJobs.push(newJob);
       }
     });
   }
@@ -158,10 +159,11 @@ export default class DataManager {
     const playerJob = this.playerData.jobStats[key];
 
     if (playerJob !== undefined) {
-      const { autoCost } = this.availableJobs.get(key);
-      if (this.playerData.money >= autoCost) {
+      const jobData = this.availableJobs.get(key);
+      if (this.playerData.money >= jobData.autoCost) {
         playerJob.managed = true;
-        this.playerData.money -= autoCost;
+        this.playerData.money -= jobData.autoCost;
+        this.addRunningJob(key);
       }
     }
   }

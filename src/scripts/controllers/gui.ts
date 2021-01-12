@@ -10,7 +10,7 @@ import { Button, ButtonType, LabelElement, LineElement } from '../types/elements
 import { JOB_SHEET_COORDS, CarSheet } from '../utils/imagebundler';
 import { BoundingBox, Size, Vector2 } from '../types/physics';
 
-export const GUI_REFRESH_CYCLE = 1000 / 20; // 20 fps
+export const GUI_REFRESH_CYCLE = 1000 / 20; // 50 fps
 
 export default class GUI {
   // #region Vars
@@ -34,8 +34,6 @@ export default class GUI {
 
     this.writeText(ELEMENT.LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
     window.onresize = () => this.resize();
-
-    window.setInterval(() => this.drawGUI(), GUI_REFRESH_CYCLE);
   }
 
   /**
@@ -65,6 +63,7 @@ export default class GUI {
    */
   public setToGame(): void {
     this.drawGUI(true);
+    window.setInterval(() => this.drawGUI(), GUI_REFRESH_CYCLE);
   }
   // #endregion
 
@@ -147,6 +146,11 @@ export default class GUI {
    * @param map Whether or not to map button to mouse tracker.
    */
   private drawButton(key: Business, map: boolean): void {
+    // Vars
+    const jobInfo = this.dataManager.availableJobs.get(key);
+    const stats = this.dataManager.playerData.jobStats[key];
+
+    // Draw Sprites
     const { anchor: layoutAnchor, span } = ELEMENT.LAYOUT;
 
     const offset = ELEMENT.BUTTON_SIZE.width + span.x;
@@ -156,18 +160,19 @@ export default class GUI {
     const x = layoutAnchor.x + oddOffset + lastOffset;
     const y = layoutAnchor.y + (ELEMENT.BUTTON_SIZE.height + span.y) * Math.floor(key / 2);
 
-    // Draw Sprites
     const position: Vector2 = { x, y };
     const boxAt: Vector2 = { x: x - lastOffset / 2, y };
     const size: Size = { width: ELEMENT.BUTTON_SIZE.width + lastOffset, height: ELEMENT.BUTTON_SIZE.height };
 
-    this.drawBorder(boxAt, size);
+    let completion = 0;
+    if (stats !== undefined && stats.time !== undefined && stats.time > 0)
+      completion = (jobInfo.delay - stats.time) / jobInfo.delay;
+
+    this.drawBG(boxAt, size, completion);
     this.drawTruck(position, key);
     if (map === true) this.mapJobBox(boxAt, size, key);
 
     // Draw HUD
-    const jobInfo = this.dataManager.availableJobs.get(key);
-    const stats = this.dataManager.playerData.jobStats[key];
     const amount = stats !== undefined ? stats.amount : 0;
     const profit = `${(jobInfo.profit / 100).toFixed()} × ${amount}`;
     const infoPos = { x: position.x + lastOffset / 2, y: position.y };
@@ -202,10 +207,14 @@ export default class GUI {
    * Possibly temporary, draws a gray border around button.
    * @param boxAt Where to start the box.
    * @param size Box dimensions.
+   * @param completion How much of the job is complete.
    */
-  private drawBorder(boxAt: Vector2, size: Size): void {
+  private drawBG(boxAt: Vector2, size: Size, completion: number): void {
     const { x, y } = boxAt;
     const { width, height } = size;
+
+    this.context.fillStyle = '#386FA4';
+    this.context.fillRect(x, y, width * completion, height);
 
     this.context.beginPath();
     this.context.rect(x, y, width, height);
