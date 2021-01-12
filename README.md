@@ -46,7 +46,7 @@ Localstorage is quite easily accessible and manageable by JS so no great adventu
 #### Mouse mapping: 
 It was way simpler than I thought it would have to be in order to map clicks with the canvas and a custom tracker.
 
-####Husky:
+#### Husky:
 If you're not using this yet. Do it. I'm probably never gonna quit hooking.
 
 ## Nays:
