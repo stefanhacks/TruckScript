@@ -1,32 +1,14 @@
-import { VIEW_SIZE } from '../game';
-import { LabelElement } from './types/elements';
-import writeText from './utils/write';
 import { BGSheet, CarSheet, EmoteSheet } from './utils/imagebundler';
 
 export default class Loader {
   // #region Vars
   private context: CanvasRenderingContext2D;
 
-  private labelSpecs: LabelElement = {
-    content: 'loading...',
-    fontSize: 20,
-    fontFamily: 'system-ui',
-    align: 'center',
-    fillStyle: 'white',
-  };
   // #endregion
 
   // #region Constructor
   public constructor(context: CanvasRenderingContext2D) {
     this.context = context;
-    this.makeLabel();
-  }
-
-  /**
-   * Makes the loading label.
-   */
-  private makeLabel(): void {
-    writeText(this.context, this.labelSpecs, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
   }
 
   /**

@@ -1,6 +1,14 @@
 import { Size } from '../types/physics';
 import { ButtonLayout, LabelElement, LineElement } from '../types/elements';
 
+export const LOADING: LabelElement = {
+  content: 'loading...',
+  fontSize: 20,
+  fontFamily: 'system-ui',
+  align: 'center',
+  fillStyle: 'white',
+};
+
 export const TITLE: LabelElement = {
   fontSize: 30,
   fillStyle: 'white',

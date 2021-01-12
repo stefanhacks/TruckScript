@@ -4,10 +4,9 @@ import DataManager from './datamanager';
 
 import { Business, Job } from '../models/jobs';
 import { PlayerData } from '../models/playerdata';
-import { TITLE, LINE, MONEY, BUTTON_SIZE, LAYOUT, NAME, PROFIT } from '../models/guielements';
+import { TITLE, LINE, MONEY, BUTTON_SIZE, LAYOUT, NAME, PROFIT, LOADING } from '../models/guielements';
 
-import { LineElement } from '../types/elements';
-import writeText from '../utils/write';
+import { LabelElement, LineElement } from '../types/elements';
 import { JOB_SHEET_COORDS, CarSheet } from '../utils/imagebundler';
 import { Vector2 } from '../types/physics';
 
@@ -25,6 +24,8 @@ export default class GUI {
     this.context = context;
     this.mouseTracker = mouseTracker;
     this.dataManager = dataManager;
+
+    this.writeText(this.context, LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
   }
 
   /**
@@ -37,8 +38,8 @@ export default class GUI {
     this.drawLine(LINE);
     this.drawButtons(data);
 
-    writeText(this.context, TITLE, { x: 20, y: 40 });
-    writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
+    this.writeText(this.context, TITLE, { x: 20, y: 40 });
+    this.writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
   }
   // #endregion
 
@@ -49,6 +50,31 @@ export default class GUI {
   private clearContext(): void {
     const { width, height } = VIEW_SIZE;
     this.context.clearRect(0, 0, width, height);
+  }
+
+  /**
+   * Given context and a text element type, draws text.
+   * @param context Context to draw with.
+   * @param text Typed element with text configuration.
+   * @param position Where to write at.
+   * @param append Optional string. Appends to end of content.
+   */
+  private writeText(
+    context: CanvasRenderingContext2D,
+    text: LabelElement,
+    position: Vector2,
+    append: string | number = ''
+  ): void {
+    const { content, fontSize, fontFamily, fillStyle, align } = text;
+
+    const family = fontFamily !== undefined ? fontFamily : 'system-ui';
+    const size = fontSize !== undefined ? fontSize : 20;
+
+    context.font = `${size}px ${family}`;
+    context.textAlign = align !== undefined ? align : 'left';
+    context.fillStyle = fillStyle !== undefined ? fillStyle : 'white';
+
+    context.fillText(content + append, position.x, position.y);
   }
 
   /**
@@ -140,12 +166,12 @@ export default class GUI {
     const jobInfo = this.dataManager.availableJobs.get(key);
 
     const namePos = { x: position.x + nameOffset.x + offset / 2, y: position.y + nameOffset.y };
-    writeText(this.context, NAME, namePos, jobInfo.name);
+    this.writeText(this.context, NAME, namePos, jobInfo.name);
 
     const profitPosition = { x: position.x + profitOffset.x + offset / 2, y: position.y + profitOffset.y };
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
     const profit = `${jobInfo.profit} × ${amount}`;
-    writeText(this.context, PROFIT, profitPosition, profit);
+    this.writeText(this.context, PROFIT, profitPosition, profit);
   }
   // #endregion
 }

@@ -36,8 +36,8 @@ export class Game {
     loader.doLoad().then(() => {
       timer.addSubscriber(() => data.manageJobCycle());
       timer.addSubscriber(() => gui.drawGUI(data.playerData));
-      timer.startTicking();
 
+      timer.startTicking();
       gui.drawGUI(data.playerData);
     });
   }
