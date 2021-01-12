@@ -19,6 +19,6 @@ export function newPlayer(): PlayerData {
   return {
     money: 0,
     lastTime: Date.now(),
-    jobStats: { [Business.HotDog]: { amount: 1 } },
+    jobStats: { [Business.HotDog]: { amount: 1, managed: false } },
   } as PlayerData;
 }

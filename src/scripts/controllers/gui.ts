@@ -10,6 +10,8 @@ import { Button, ButtonType, LabelElement, LineElement } from '../types/elements
 import { JOB_SHEET_COORDS, CarSheet } from '../utils/imagebundler';
 import { BoundingBox, Size, Vector2 } from '../types/physics';
 
+export const GUI_REFRESH_CYCLE = 1000 / 20; // 20 fps
+
 export default class GUI {
   // #region Vars
   private context: CanvasRenderingContext2D;
@@ -17,6 +19,8 @@ export default class GUI {
   private mouseTracker: MouseTracker;
 
   private dataManager: DataManager;
+
+  private lastClick: number;
   // #endregion
 
   private canvas: HTMLCanvasElement;
@@ -30,6 +34,8 @@ export default class GUI {
 
     this.writeText(this.context, ELEMENT.LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
     window.onresize = () => this.resize();
+
+    window.setInterval(() => this.drawGUI(), GUI_REFRESH_CYCLE);
   }
 
   /**
@@ -51,7 +57,7 @@ export default class GUI {
     this.canvas.width = 720 / scaleRatio;
     this.canvas.height = 600 / scaleRatio;
     this.context.scale(1 / scaleRatio, 1 / scaleRatio);
-    this.drawGUI(this.dataManager.playerData);
+    this.drawGUI();
   }
   // #endregion
 
@@ -65,7 +71,7 @@ export default class GUI {
   }
 
   public setToGame(): void {
-    this.drawGUI(this.dataManager.playerData, true);
+    this.drawGUI(true);
   }
 
   /**
@@ -73,7 +79,8 @@ export default class GUI {
    * @param data PlayerData object, so player data may be fetched and drawn.
    * @param mapButtons Whether or not to map buttons to mouse tracker. Defaults to false.
    */
-  public drawGUI(data: PlayerData, mapButtons = false): void {
+  public drawGUI(mapButtons = false): void {
+    const data = this.dataManager.playerData;
     this.clearContext();
 
     this.drawLine(ELEMENT.LINE);
@@ -211,11 +218,19 @@ export default class GUI {
     this.drawName(root, jobInfo);
 
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
-    const profit = `${jobInfo.profit} × ${amount}`;
+    const profit = `${(jobInfo.profit / 100).toFixed()} × ${amount}`;
     this.drawProfit(root, profit);
 
     const cost = jobInfo.cost(amount);
-    this.drawBuy(root, key, `${(cost / 100).toFixed(2)}`);
+
+    const { down, up, forbidden } = ELEMENT.BUY_COLORS;
+    let color: string;
+    if (this.lastClick === key) color = down;
+    else if (cost > player.money) color = forbidden;
+    else color = up;
+
+    this.lastClick = null;
+    this.drawBuy(root, key, `${(cost / 100).toFixed(2)}`, color);
     this.drawManager();
   }
 
@@ -231,14 +246,14 @@ export default class GUI {
     this.writeText(this.context, ELEMENT.PROFIT, profitPosition, profit);
   }
 
-  private drawBuy(root: Vector2, key: Business, cost: string): void {
+  private drawBuy(root: Vector2, key: Business, cost: string, buttonColor: string): void {
     const { buyOffset } = ELEMENT.LAYOUT;
     const buyPos = { x: root.x + buyOffset.x, y: root.y + buyOffset.y };
     this.writeText(this.context, ELEMENT.BUY, buyPos, cost);
 
     const { height } = ELEMENT.BUY_SIZE;
     const boxPos = { x: root.x + buyOffset.x + 5, y: root.y + buyOffset.y - height * 0.8 };
-    this.context.fillStyle = 'green';
+    this.context.fillStyle = buttonColor;
     this.context.fillRect(boxPos.x, boxPos.y, ELEMENT.BUY_SIZE.width, ELEMENT.BUY_SIZE.height);
     this.mapBuyBox(boxPos, ELEMENT.BUY_SIZE, key);
 
@@ -271,7 +286,10 @@ export default class GUI {
    * @param key Business key to map.
    */
   private mapBuyBox(boxAt: Vector2, size: Size, key: Business): void {
-    const callback = () => this.dataManager.treatClick(key, ButtonType.Buy);
+    const callback = () => {
+      this.lastClick = key;
+      this.dataManager.treatClick(key, ButtonType.Buy);
+    };
 
     const box: BoundingBox = [boxAt, { x: boxAt.x + size.width, y: boxAt.y + size.height }];
     const button: Button = { box, callback };

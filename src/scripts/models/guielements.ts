@@ -1,5 +1,5 @@
 import { Size } from '../types/physics';
-import { ButtonLayout, LabelElement, LineElement } from '../types/elements';
+import { ButtonColorPair, ButtonLayout, LabelElement, LineElement } from '../types/elements';
 
 export const LOADING: LabelElement = {
   content: 'loading...',
@@ -68,6 +68,12 @@ export const BUTTON_SIZE: Size = {
 export const BUY_SIZE: Size = {
   height: 20,
   width: 20,
+};
+
+export const BUY_COLORS: ButtonColorPair = {
+  up: 'green',
+  down: '#B4F8C8',
+  forbidden: 'gray',
 };
 
 export const LAYOUT: ButtonLayout = {

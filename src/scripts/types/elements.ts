@@ -31,3 +31,9 @@ export enum ButtonType {
   Buy,
   Auto,
 }
+
+export type ButtonColors = {
+  down: string;
+  up: string;
+  forbidden: string;
+};

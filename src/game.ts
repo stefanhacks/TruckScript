@@ -34,7 +34,6 @@ export class Game {
 
     loader.doLoad().then(() => {
       timer.addSubscriber((delta: number) => data.manageJobCycle(delta));
-      timer.addSubscriber(() => this.gui.drawGUI(data.playerData));
 
       timer.syncTime();
       timer.startTicking();

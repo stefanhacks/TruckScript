@@ -132,14 +132,25 @@ export default class DataManager {
     const amount = playerJob === undefined ? 0 : playerJob.amount;
 
     const total = cost(amount);
+
     if (this.playerData.money >= total) {
-      playerJob.amount += 1;
+      if (playerJob === undefined) this.playerData.jobStats[key] = { amount: 1, managed: false };
+      else playerJob.amount += 1;
+
       this.playerData.money -= total;
     }
   }
 
-  private auto(): void {
-    //
+  private auto(key: Business): void {
+    const playerJob = this.playerData.jobStats[key];
+
+    if (playerJob !== undefined) {
+      const { autoCost } = this.availableJobs.get(key);
+      if (this.playerData.money >= autoCost) {
+        playerJob.managed = true;
+        this.playerData.money -= autoCost;
+      }
+    }
   }
 
   /**
