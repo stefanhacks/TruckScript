@@ -6,9 +6,9 @@ import { Business, Job } from '../models/jobs';
 import { PlayerData } from '../models/playerdata';
 import { TITLE, LINE, MONEY, BUTTON_SIZE, LAYOUT, NAME, PROFIT, LOADING } from '../models/guielements';
 
-import { LabelElement, LineElement } from '../types/elements';
+import { Button, LabelElement, LineElement } from '../types/elements';
 import { JOB_SHEET_COORDS, CarSheet } from '../utils/imagebundler';
-import { Vector2 } from '../types/physics';
+import { BoundingBox, Size, Vector2 } from '../types/physics';
 
 export default class GUI {
   // #region Vars
@@ -30,20 +30,6 @@ export default class GUI {
 
     this.writeText(this.context, LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
     window.onresize = () => this.resize();
-  }
-
-  /**
-   * Cycle to draw all Gui Elements.
-   * @param data PlayerData object, so player data may be fetched and drawn.
-   */
-  public drawGUI(data: PlayerData): void {
-    this.clearContext();
-
-    this.drawLine(LINE);
-    this.drawButtons(data);
-
-    this.writeText(this.context, TITLE, { x: 20, y: 40 });
-    this.writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
   }
 
   /**
@@ -78,6 +64,27 @@ export default class GUI {
     this.context.clearRect(0, 0, width, height);
   }
 
+  public setToGame(): void {
+    this.drawGUI(this.dataManager.playerData, true);
+  }
+
+  /**
+   * Cycle to draw all Gui Elements.
+   * @param data PlayerData object, so player data may be fetched and drawn.
+   * @param mapButtons Whether or not to map buttons to mouse tracker. Defaults to false.
+   */
+  public drawGUI(data: PlayerData, mapButtons = false): void {
+    this.clearContext();
+
+    this.drawLine(LINE);
+    this.drawButtons(data, mapButtons);
+
+    this.writeText(this.context, TITLE, { x: 20, y: 40 });
+    this.writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
+  }
+  // #endregion
+
+  // #region Shapes
   /**
    * Given context and a text element type, draws text.
    * @param context Context to draw with.
@@ -120,10 +127,11 @@ export default class GUI {
   /**
    * Given PlayerData, draws all button elements.
    * @param player Typed element with PlayerData.
+   * @param mapButtons Whether or not to map buttons to mouse tracker.
    */
-  private drawButtons(player: PlayerData): void {
+  private drawButtons(player: PlayerData, mapButtons: boolean): void {
     this.dataManager.availableJobs.forEach((job: Job<Business>, key: Business) => {
-      if (key in Business === true) this.drawButton(player, +key as Business);
+      if (key in Business === true) this.drawButton(player, +key as Business, mapButtons);
     });
   }
 
@@ -131,8 +139,9 @@ export default class GUI {
    * Draws a single button for a given player/key combo.
    * @param player PlayerData object.
    * @param key Business key object, to which to draw with.
+   * @param map Whether or not to map button to mouse tracker.
    */
-  private drawButton(player: PlayerData, key: Business): void {
+  private drawButton(player: PlayerData, key: Business, map: boolean): void {
     const { anchor: layoutAnchor, span } = LAYOUT;
 
     const offset = BUTTON_SIZE.width + span.x;
@@ -141,11 +150,17 @@ export default class GUI {
 
     const x = layoutAnchor.x + oddOffset + lastOffset;
     const y = layoutAnchor.y + (BUTTON_SIZE.height + span.y) * Math.floor(key / 2);
-    const position = { x, y };
 
-    this.drawBorder(position, lastOffset);
+    const position: Vector2 = { x, y };
+
+    const boxAt: Vector2 = { x: x - lastOffset / 2, y };
+    const size: Size = { width: BUTTON_SIZE.width + lastOffset, height: BUTTON_SIZE.height };
+
+    this.drawBorder(boxAt, size);
     this.drawTruck(position, key);
     this.drawInfo(position, key, player, lastOffset);
+
+    if (map === true) this.mapJobBox(boxAt, size, key);
   }
 
   /**
@@ -171,12 +186,15 @@ export default class GUI {
 
   /**
    * Possibly temporary, draws a gray border around button.
-   * @param position Vector2, position to draw it in.
-   * @param offset Adds to button's horizontal position.
+   * @param boxAt Where to start the box.
+   * @param size Box dimensions.
    */
-  private drawBorder(position: Vector2, offset: number): void {
+  private drawBorder(boxAt: Vector2, size: Size): void {
+    const { x, y } = boxAt;
+    const { width, height } = size;
+
     this.context.beginPath();
-    this.context.rect(position.x - offset / 2, position.y, BUTTON_SIZE.width + offset, BUTTON_SIZE.height);
+    this.context.rect(x, y, width, height);
     this.context.stroke();
   }
 
@@ -198,6 +216,20 @@ export default class GUI {
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
     const profit = `${jobInfo.profit} × ${amount}`;
     this.writeText(this.context, PROFIT, profitPosition, profit);
+  }
+
+  /**
+   * Maps a box to a datamanager click.
+   * @param boxAt Point where box starts.
+   * @param size Size of the box.
+   * @param key Business key to map.
+   */
+  private mapJobBox(boxAt: Vector2, size: Size, key: Business): void {
+    const callback = () => this.dataManager.treatClick(key);
+
+    const box: BoundingBox = [boxAt, { x: boxAt.x + size.width, y: boxAt.y + size.height }];
+    const button: Button = { box, callback };
+    this.mouseTracker.addListener(button);
   }
   // #endregion
 }

@@ -97,5 +97,29 @@ export default class DataManager {
 
     return moneyMade;
   }
+
+  /**
+   * Treats a click in one of the job buttons.
+   * @param key Business key of the button pressed.
+   */
+  public treatClick(key: Business): void {
+    const playerJob = this.playerData.jobStats[key];
+    if (playerJob !== undefined) {
+      const { managed, time } = playerJob;
+      if (managed !== true && (time === undefined || time === 0)) this.addRunningJob(key);
+    }
+  }
+
+  /**
+   * Adds a job to the running list.
+   * @param key Business key of the job to run.
+   */
+  public addRunningJob(key: Business): void {
+    const playerJob = this.playerData.jobStats[key];
+    const jobData = this.availableJobs.get(key);
+
+    playerJob.time = jobData.delay;
+    this.runningJobs.push(jobData);
+  }
   // #endregion
 }

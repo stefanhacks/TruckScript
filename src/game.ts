@@ -38,7 +38,7 @@ export class Game {
 
       timer.syncTime();
       timer.startTicking();
-      this.gui.drawGUI(data.playerData);
+      this.gui.setToGame();
     });
   }
   // #endregion

@@ -22,12 +22,12 @@ export type Job<T> = {
  */
 export function makeJob<T extends Business>(id: T): Job<T> {
   /**
-   * Delay: [5000, 5125, 5500, 6125, 8000, 16125, 36500]
+   * Delay: [2000, 2125, 2500, 3125, 5000, 13125, 32500]
    * Profit: [50, 160, 530, 1220, 2350, 7400, 221810]
    * Ratio: [100.0, 32.0, 10.4, 5.0, 3.4, 2.8, 0.16]
    */
 
-  const delay = 5000 + 125 * id ** 2 + 1000 * Math.max(id - 3, 0) ** 3;
+  const delay = 2000 + 125 * id ** 2 + 1000 * Math.max(id - 3, 0) ** 3;
   const profit = 49 + 100 * id ** 2 + 10 * id ** 3 + 60 ** Math.max(id - 3, 0) + Math.floor(id / 4);
   const initialPrice = 10 + 190 * id + 250 ** Math.max(id - 1, 0);
   const increment = initialPrice / 2;
