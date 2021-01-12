@@ -140,6 +140,8 @@ export default class GUI {
     this.dataManager.availableJobs.forEach((job: Job<Business>, key: Business) => {
       if (key in Business === true) this.drawButton(player, +key as Business, mapButtons);
     });
+
+    this.lastClick = null;
   }
 
   /**
@@ -215,45 +217,56 @@ export default class GUI {
   private drawInfo(position: Vector2, key: Business, player: PlayerData, offset: number): void {
     const jobInfo = this.dataManager.availableJobs.get(key);
     const root = { x: position.x + offset / 2, y: position.y };
-    this.drawName(root, jobInfo);
+    this.drawName(root, jobInfo.name);
 
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
     const profit = `${(jobInfo.profit / 100).toFixed()} × ${amount}`;
     this.drawProfit(root, profit);
 
-    const cost = jobInfo.cost(amount);
-
-    const { down, up, forbidden } = ELEMENT.BUY_COLORS;
-    let color: string;
-    if (this.lastClick === key) color = down;
-    else if (cost > player.money) color = forbidden;
-    else color = up;
-
-    this.lastClick = null;
-    this.drawBuy(root, key, `${(cost / 100).toFixed(2)}`, color);
+    this.drawBuy(root, key, jobInfo.cost(amount));
     this.drawManager();
   }
 
-  private drawName(root: Vector2, jobInfo: Job<Business>): void {
+  /**
+   * Draws the business name.
+   * @param root Anchor position of the job box.
+   * @param name Name to draw.
+   */
+  private drawName(root: Vector2, name: string): void {
     const { nameOffset } = ELEMENT.LAYOUT;
     const namePos = { x: root.x + nameOffset.x, y: root.y + nameOffset.y };
-    this.writeText(this.context, ELEMENT.NAME, namePos, jobInfo.name);
+    this.writeText(this.context, ELEMENT.NAME, namePos, name);
   }
 
+  /**
+   * Draws the profit label.
+   * @param root Anchor position of the job box.
+   * @param profit Value to draw.
+   */
   private drawProfit(root: Vector2, profit: string): void {
     const { profitOffset } = ELEMENT.LAYOUT;
     const profitPosition = { x: root.x + profitOffset.x, y: root.y + profitOffset.y };
     this.writeText(this.context, ELEMENT.PROFIT, profitPosition, profit);
   }
 
-  private drawBuy(root: Vector2, key: Business, cost: string, buttonColor: string): void {
+  /**
+   * Draws the buy button.
+   * @param root Anchor position of the job box.
+   * @param key Business key.
+   * @param cost Cost to write.
+   */
+  private drawBuy(root: Vector2, key: Business, cost: number): void {
+    const { down, up, forbidden } = ELEMENT.BUY_COLORS;
+    let color = forbidden;
+    if (cost < this.dataManager.playerData.money) color = this.lastClick === key ? down : up;
+
     const { buyOffset } = ELEMENT.LAYOUT;
     const buyPos = { x: root.x + buyOffset.x, y: root.y + buyOffset.y };
-    this.writeText(this.context, ELEMENT.BUY, buyPos, cost);
+    this.writeText(this.context, ELEMENT.BUY, buyPos, `${(cost / 100).toFixed(2)}`);
 
     const { height } = ELEMENT.BUY_SIZE;
     const boxPos = { x: root.x + buyOffset.x + 5, y: root.y + buyOffset.y - height * 0.8 };
-    this.context.fillStyle = buttonColor;
+    this.context.fillStyle = color;
     this.context.fillRect(boxPos.x, boxPos.y, ELEMENT.BUY_SIZE.width, ELEMENT.BUY_SIZE.height);
     this.mapBuyBox(boxPos, ELEMENT.BUY_SIZE, key);
 
@@ -264,7 +277,9 @@ export default class GUI {
   private drawManager(): void {
     //
   }
+  // #endregion
 
+  // #region Click Mapping
   /**
    * Maps a box to a datamanager run click.
    * @param boxAt Point where box starts.
