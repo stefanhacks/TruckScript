@@ -75,9 +75,5 @@ I did want to add some kind of animations to the sprites, but the GUI was a time
 
 -----
 
-
------
-
-
 #### License
 [MIT](https://choosealicense.com/licenses/mit/)
