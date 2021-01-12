@@ -32,6 +32,15 @@ So, to both flex the basics and adventure into making code readable and well str
 
 As a bonus, working with CI, setting up a local environment correctly - with githooks and elsint - is always good practice.
 
+## Approach:
+
+The intent here was to cover most, if not all bases. No external library was used for time management, mouse events, data control or anything of the sort. My goal was to tackle different typescript problems with little else, as to better move within its confines.
+
+My best efforts were spent in keeping things as single-purpose as possible. Game.ts boots the game, Loader.ts loads the visual assets, and so on. If a function needs debugging, it should lie in the most obvious of places. JSDocs were standart throughout the application, keeping the simple TS pattern, and hopefully clear enough that every method warrants no extra explanation.
+
+Of course, setbacks always happen and such a broad approach does not necessarily render the most pleasant of visual results. Keeping with simple JS constructs allows for little visual power and a lack of glimmer ends up being noticeable. Had I opted to use a robust visual library (React, Pixi, etc) certainly the game would have looked differently - but I believe I would have missed the mark I intended to - the basics.
+
+
 ## Yays:
 Since I decided to write stuff - mostly - by scratch, I ran into a few hurdles here and there but I'm satisfied of the result.
 
@@ -39,7 +48,7 @@ Since I decided to write stuff - mostly - by scratch, I ran into a few hurdles h
 Honestly this was the one thing I was most afraid of. NPM builds, webpacking, hosting, CI are things I always use but rarely set them up. Taking notes and doing things my way made way for great lessons and it paid of. Netlify was easy to set up and get running in no time, and although I struggled a bit with parcel building cycle in the beginning it was only a matter of getting used to it.
 
 #### Canvas manipulation:
-Simple, if not exhausting. Drawing frame by frame reminds me of pure Java lessons, no wonder Game Engines are all around us. But once you get the grip and have the basic structure in, it becomes simple to get it going.
+Simple, if not exhausting. Drawing frame by frame reminds me of pure Java lessons, no wonder Game Engines are all around us. But once you get the grip and have the basic structure in, it becomes simple to get it going. I'm happy I managed to slide in mobile resizing support, even.
 
 #### Data manipulation: 
 Localstorage is quite easily accessible and manageable by JS so no great adventure to be told here. It can get confusing, certainly, if you don't do your usual cleanup afterwards when testing, but it's another one of those things you get used to.
