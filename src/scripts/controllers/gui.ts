@@ -19,13 +19,17 @@ export default class GUI {
   private dataManager: DataManager;
   // #endregion
 
+  private canvas: HTMLCanvasElement;
+
   // #region Constructor
-  public constructor(context: CanvasRenderingContext2D, mouseTracker: MouseTracker, dataManager: DataManager) {
-    this.context = context;
+  public constructor(canvas: HTMLCanvasElement, mouseTracker: MouseTracker, dataManager: DataManager) {
+    this.context = canvas.getContext('2d');
+    this.canvas = canvas;
     this.mouseTracker = mouseTracker;
     this.dataManager = dataManager;
 
     this.writeText(this.context, LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
+    window.onresize = () => this.resize();
   }
 
   /**
@@ -40,6 +44,28 @@ export default class GUI {
 
     this.writeText(this.context, TITLE, { x: 20, y: 40 });
     this.writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
+  }
+
+  /**
+   * Window resize callback. Resizes canvas according to inner dimensions.
+   */
+  private resize(): void {
+    // Reset context to identity.
+    this.context.setTransform();
+    const { innerWidth, innerHeight } = window;
+
+    /**
+     * Somewhat arbitrary values, but tested on some major
+     * devices, such as iPhones, Moto G and Galaxy models.
+     */
+    let scaleRatio = 1;
+    if (innerWidth < 650 || innerHeight < 350) scaleRatio = 3;
+    else if (innerWidth < 760 || innerHeight < 600) scaleRatio = 1.8;
+
+    this.canvas.width = 720 / scaleRatio;
+    this.canvas.height = 600 / scaleRatio;
+    this.context.scale(1 / scaleRatio, 1 / scaleRatio);
+    this.drawGUI(this.dataManager.playerData);
   }
   // #endregion
 

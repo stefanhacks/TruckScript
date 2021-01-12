@@ -7,8 +7,8 @@ export default class Loader {
   // #endregion
 
   // #region Constructor
-  public constructor(context: CanvasRenderingContext2D) {
-    this.context = context;
+  public constructor(canvas: HTMLCanvasElement) {
+    this.context = canvas.getContext('2d');
   }
 
   /**
