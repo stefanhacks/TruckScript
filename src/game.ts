@@ -11,13 +11,12 @@ export class Game {
   // #region Vars
   private canvas: HTMLCanvasElement;
 
-  private context: CanvasRenderingContext2D;
+  private gui: GUI;
   // #endregion
 
   // #region Constructor
   public constructor() {
     this.canvas = document.querySelector('#game') as HTMLCanvasElement;
-    this.context = this.canvas.getContext('2d');
   }
   // #endregion
 
@@ -29,16 +28,16 @@ export class Game {
     const data = new DataManager();
     const timer = new TimeTracker(data);
 
-    const loader = new Loader(this.context);
+    const loader = new Loader(this.canvas);
     const mouser = new MouseTracker(this.canvas);
-    const gui = new GUI(this.context, mouser, data);
+    this.gui = new GUI(this.canvas, mouser, data);
 
     loader.doLoad().then(() => {
-      timer.addSubscriber(() => data.manageJobCycle());
-      timer.addSubscriber(() => gui.drawGUI(data.playerData));
-      timer.startTicking();
+      timer.addSubscriber((delta: number) => data.manageJobCycle(delta));
 
-      gui.drawGUI(data.playerData);
+      timer.syncTime();
+      timer.startTicking();
+      this.gui.setToGame();
     });
   }
   // #endregion

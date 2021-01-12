@@ -37,11 +37,18 @@ export default class MouseTracker {
    */
   private checkClick(point: Vector2) {
     const { x, y } = point;
-    this.clickables.forEach((button: Button) => {
+
+    // Basic math to check if provided point lies within any button.
+    // Callbacks if so, but fires only for the first if overlapping.
+    this.clickables.every((button: Button) => {
       const { box, callback } = button;
       const [start, end] = box;
-      // Basic math to check if provided point lies within any buttons. Callback is called if so.
-      if (x >= start.x && x < end.x) if (y >= start.y && y < end.y) callback();
+      if (x >= start.x && x < end.x && y >= start.y && y < end.y) {
+        callback();
+        return false;
+      }
+
+      return true;
     });
   }
   // #endregion

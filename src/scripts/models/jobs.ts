@@ -14,6 +14,8 @@ export type Job<T> = {
   profit: number;
   buy: { initialPrice: number; increment: number };
   delay: number;
+  autoCost: number;
+  cost: (amount: number) => number;
 };
 
 /**
@@ -22,17 +24,21 @@ export type Job<T> = {
  */
 export function makeJob<T extends Business>(id: T): Job<T> {
   /**
-   * Delay: [5000, 5125, 5500, 6125, 8000, 16125, 36500]
+   * Price: [10, 90, 540, 1840, 4710, 18510, 665440]
+   *
+   * Delay: [2000, 3250, 7000, 13250, 23000, 41250, 74000]
    * Profit: [50, 160, 530, 1220, 2350, 7400, 221810]
-   * Ratio: [100.0, 32.0, 10.4, 5.0, 3.4, 2.8, 0.16]
    */
 
-  const delay = 5000 + 125 * id ** 2 + 1000 * Math.max(id - 3, 0) ** 3;
-  const profit = 49 + 100 * id ** 2 + 10 * id ** 3 + 60 ** Math.max(id - 3, 0) + Math.floor(id / 4);
-  const initialPrice = 10 + 190 * id + 250 ** Math.max(id - 1, 0);
+  const delay = 2000 + 1250 * id ** 2 + 1000 * Math.max(id - 3, 0) ** 3;
+  const profit = (49 + 100 * id ** 2 + 10 * id ** 3 + 60 ** Math.max(id - 3, 0) + Math.floor(id / 4)) * 100;
+  const initialPrice = 1000 + (profit * id) / 2;
   const increment = initialPrice / 2;
   const name = Business[id];
+  const auto = (2000 + 2000 * id ** 2) * 100;
 
-  const job: Job<T> = { id, name, profit, buy: { initialPrice, increment }, delay };
+  const cost = (amount: number) => initialPrice + increment * amount;
+
+  const job: Job<T> = { id, name, profit, buy: { initialPrice, increment }, autoCost: auto, delay, cost };
   return job;
 }
