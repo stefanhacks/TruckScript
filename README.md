@@ -21,6 +21,7 @@
 - 💎 [Eslint](eslint.org)/[Tslint](https://github.com/typescript-eslint/typescript-eslint) + [Prettier](https://prettier.io), to keep things orderly.
 - 🐺 [Husky](https://typicode.github.io/husky/#/), to enforce Eslint on git hooks.
 - 🚇 [Netlify](app.netlify.com), as CI.
+- 📊 [Trello](https://trello.com/b/a8TEZiV7/tscript), for planning and time tracking. There are better trackers, but I wanted to make the data public, so...
 
 -----
 
