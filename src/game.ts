@@ -34,9 +34,10 @@ export class Game {
     const gui = new GUI(this.context, mouser, data);
 
     loader.doLoad().then(() => {
-      timer.addSubscriber(() => data.manageJobCycle());
+      timer.addSubscriber((delta: number) => data.manageJobCycle(delta));
       timer.addSubscriber(() => gui.drawGUI(data.playerData));
 
+      timer.syncTime();
       timer.startTicking();
       gui.drawGUI(data.playerData);
     });

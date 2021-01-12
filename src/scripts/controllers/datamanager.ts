@@ -1,6 +1,5 @@
 import { Business, Job, makeJob } from '../models/jobs';
 import { newPlayer, PlayerData } from '../models/playerdata';
-import { JOB_CYCLE } from './timetracker';
 
 export default class DataManager {
   // #region Vars
@@ -14,10 +13,12 @@ export default class DataManager {
   // #region Constructor
   public constructor() {
     this.playerData = JSON.parse(window.localStorage.getItem('stTruckerSave'));
-    if (this.playerData === null || this.playerData === undefined) this.playerData = newPlayer();
+    if (this.playerData === null || this.playerData === undefined) {
+      this.playerData = newPlayer();
+      this.save();
+    }
 
     this.readyJobs();
-    this.save();
   }
 
   /**
@@ -43,20 +44,21 @@ export default class DataManager {
    * Saves Player Data on local storage.
    */
   public save(): void {
-    this.playerData.lastTime = Date.now();
+    this.playerData.lastTime = new Date().getTime();
     window.localStorage.setItem('stTruckerSave', JSON.stringify(this.playerData));
   }
 
   /**
    * Accounts for a time cycle, accounts for every running job.
+   * @param delta How many milliseconds to account for.
    */
-  public manageJobCycle(): void {
+  public manageJobCycle(delta: number): void {
     let moneyMade = 0;
     const checkJobs = this.runningJobs;
     this.runningJobs = [];
 
     checkJobs.forEach((running: Job<Business>) => {
-      moneyMade += this.manageJob(running);
+      moneyMade += this.manageJob(running, delta);
     });
 
     this.playerData.money += moneyMade;
@@ -65,20 +67,26 @@ export default class DataManager {
   /**
    * Accounts a job cycle for a given job.
    * @param job Given JobType, will be looked up on player data.
+   * @param delta How many milliseconds to account for.
    */
-  private manageJob(job: Job<Business>): number {
-    const { id, profit } = job;
-
+  private manageJob(job: Job<Business>, delta: number): number {
     // Respective Player Job Data
+    const { id, profit, delay } = job;
     const playerJob = this.playerData.jobStats[id];
-    playerJob.time -= JOB_CYCLE;
-
-    // Money making Cycle.
-    let moneyMade = 0;
     const { amount, managed, time } = playerJob;
 
-    if (time <= 0) {
-      moneyMade += profit * amount;
+    // Money making Cycle.
+    const timer = time - delta;
+    playerJob.time = timer;
+    let moneyMade = 0;
+
+    // If enough timer has passed,
+    if (timer <= 0) {
+      // To figure out how many cycles have been run we need to check if:
+      // a)  Job is managed and b) There was enough time for another cycle.
+      const cycles = managed === false && timer < -delay ? 1 + Math.floor(Math.abs(timer) / delay) : 1;
+      moneyMade += profit * amount * cycles;
+
       if (managed === true) {
         playerJob.time = job.delay;
         this.runningJobs.push(job);
