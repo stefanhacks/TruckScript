@@ -1,3 +1,4 @@
+import { ButtonType } from '../types/elements';
 import { Business, Job, makeJob } from '../models/jobs';
 import { newPlayer, PlayerData } from '../models/playerdata';
 
@@ -102,19 +103,50 @@ export default class DataManager {
    * Treats a click in one of the job buttons.
    * @param key Business key of the button pressed.
    */
-  public treatClick(key: Business): void {
+  public treatClick(key: Business, type: ButtonType): void {
+    switch (type) {
+      case ButtonType.Run:
+        this.run(key);
+        break;
+      case ButtonType.Buy:
+        this.buy(key);
+        break;
+      case ButtonType.Auto:
+        this.auto(key);
+        break;
+      // no default
+    }
+  }
+
+  private run(key: Business): void {
     const playerJob = this.playerData.jobStats[key];
     if (playerJob !== undefined) {
       const { managed, time } = playerJob;
-      if (managed !== true && (time === undefined || time === 0)) this.addRunningJob(key);
+      if (managed !== true && (time === undefined || time <= 0)) this.addRunningJob(key);
     }
+  }
+
+  private buy(key: Business): void {
+    const playerJob = this.playerData.jobStats[key];
+    const { cost } = this.availableJobs.get(key);
+    const amount = playerJob === undefined ? 0 : playerJob.amount;
+
+    const total = cost(amount);
+    if (this.playerData.money >= total) {
+      playerJob.amount += 1;
+      this.playerData.money -= total;
+    }
+  }
+
+  private auto(): void {
+    //
   }
 
   /**
    * Adds a job to the running list.
    * @param key Business key of the job to run.
    */
-  public addRunningJob(key: Business): void {
+  private addRunningJob(key: Business): void {
     const playerJob = this.playerData.jobStats[key];
     const jobData = this.availableJobs.get(key);
 

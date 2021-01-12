@@ -37,7 +37,26 @@ export const NAME: LabelElement = {
 
 export const PROFIT: LabelElement = {
   fontSize: 16,
-  content: `Profit: T$`,
+  content: 'Profit: T$',
+  align: 'right',
+};
+
+export const BUY: LabelElement = {
+  fontSize: 16,
+  content: 'BUY: T$',
+  align: 'right',
+};
+
+export const PLUS: LabelElement = {
+  fontSize: 16,
+  content: '+',
+  fillStyle: 'white',
+  align: 'center',
+};
+
+export const MANAGER: LabelElement = {
+  fontSize: 16,
+  content: 'AUTO: T$',
   align: 'right',
 };
 
@@ -46,10 +65,17 @@ export const BUTTON_SIZE: Size = {
   width: 280,
 };
 
+export const BUY_SIZE: Size = {
+  height: 20,
+  width: 20,
+};
+
 export const LAYOUT: ButtonLayout = {
   anchor: { x: 30, y: 90 },
-  span: { x: 100, y: 30 },
+  span: { x: 100, y: 50 },
   srcOffset: { x: 15, y: 20 },
   nameOffset: { x: 268, y: 25 },
   profitOffset: { x: 268, y: 46 },
+  buyOffset: { x: 255, y: 105 },
+  managerOffset: { x: 268, y: 66 },
 };

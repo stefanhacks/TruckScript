@@ -22,4 +22,12 @@ export type ButtonLayout = {
   srcOffset: Vector2;
   nameOffset: Vector2;
   profitOffset: Vector2;
+  buyOffset: Vector2;
+  managerOffset: Vector2;
 };
+
+export enum ButtonType {
+  Run,
+  Buy,
+  Auto,
+}

@@ -4,9 +4,9 @@ import DataManager from './datamanager';
 
 import { Business, Job } from '../models/jobs';
 import { PlayerData } from '../models/playerdata';
-import { TITLE, LINE, MONEY, BUTTON_SIZE, LAYOUT, NAME, PROFIT, LOADING } from '../models/guielements';
+import * as ELEMENT from '../models/guielements';
 
-import { Button, LabelElement, LineElement } from '../types/elements';
+import { Button, ButtonType, LabelElement, LineElement } from '../types/elements';
 import { JOB_SHEET_COORDS, CarSheet } from '../utils/imagebundler';
 import { BoundingBox, Size, Vector2 } from '../types/physics';
 
@@ -28,7 +28,7 @@ export default class GUI {
     this.mouseTracker = mouseTracker;
     this.dataManager = dataManager;
 
-    this.writeText(this.context, LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
+    this.writeText(this.context, ELEMENT.LOADING, { x: VIEW_SIZE.width / 2, y: VIEW_SIZE.height / 2 });
     window.onresize = () => this.resize();
   }
 
@@ -76,11 +76,11 @@ export default class GUI {
   public drawGUI(data: PlayerData, mapButtons = false): void {
     this.clearContext();
 
-    this.drawLine(LINE);
+    this.drawLine(ELEMENT.LINE);
     this.drawButtons(data, mapButtons);
 
-    this.writeText(this.context, TITLE, { x: 20, y: 40 });
-    this.writeText(this.context, MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
+    this.writeText(this.context, ELEMENT.TITLE, { x: 20, y: 40 });
+    this.writeText(this.context, ELEMENT.MONEY, { x: 700, y: 40 }, (data.money / 100).toFixed(2));
   }
   // #endregion
 
@@ -142,19 +142,19 @@ export default class GUI {
    * @param map Whether or not to map button to mouse tracker.
    */
   private drawButton(player: PlayerData, key: Business, map: boolean): void {
-    const { anchor: layoutAnchor, span } = LAYOUT;
+    const { anchor: layoutAnchor, span } = ELEMENT.LAYOUT;
 
-    const offset = BUTTON_SIZE.width + span.x;
+    const offset = ELEMENT.BUTTON_SIZE.width + span.x;
     const oddOffset = Math.floor(key % 2) === 0 ? 0 : offset;
     const lastOffset = key === this.dataManager.availableJobs.size - 1 ? offset / 2 : 0;
 
     const x = layoutAnchor.x + oddOffset + lastOffset;
-    const y = layoutAnchor.y + (BUTTON_SIZE.height + span.y) * Math.floor(key / 2);
+    const y = layoutAnchor.y + (ELEMENT.BUTTON_SIZE.height + span.y) * Math.floor(key / 2);
 
     const position: Vector2 = { x, y };
 
     const boxAt: Vector2 = { x: x - lastOffset / 2, y };
-    const size: Size = { width: BUTTON_SIZE.width + lastOffset, height: BUTTON_SIZE.height };
+    const size: Size = { width: ELEMENT.BUTTON_SIZE.width + lastOffset, height: ELEMENT.BUTTON_SIZE.height };
 
     this.drawBorder(boxAt, size);
     this.drawTruck(position, key);
@@ -170,7 +170,7 @@ export default class GUI {
    */
   private drawTruck(position: Vector2, key: Business): void {
     const { anchor, size } = JOB_SHEET_COORDS[key];
-    const { srcOffset } = LAYOUT;
+    const { srcOffset } = ELEMENT.LAYOUT;
     this.context.drawImage(
       CarSheet.data,
       anchor.x,
@@ -206,26 +206,72 @@ export default class GUI {
    * @param offset Adds to button's horizontal position.
    */
   private drawInfo(position: Vector2, key: Business, player: PlayerData, offset: number): void {
-    const { nameOffset, profitOffset } = LAYOUT;
     const jobInfo = this.dataManager.availableJobs.get(key);
+    const root = { x: position.x + offset / 2, y: position.y };
+    this.drawName(root, jobInfo);
 
-    const namePos = { x: position.x + nameOffset.x + offset / 2, y: position.y + nameOffset.y };
-    this.writeText(this.context, NAME, namePos, jobInfo.name);
-
-    const profitPosition = { x: position.x + profitOffset.x + offset / 2, y: position.y + profitOffset.y };
     const amount = player.jobStats[key] !== undefined ? player.jobStats[key].amount : 0;
     const profit = `${jobInfo.profit} × ${amount}`;
-    this.writeText(this.context, PROFIT, profitPosition, profit);
+    this.drawProfit(root, profit);
+
+    const cost = jobInfo.cost(amount);
+    this.drawBuy(root, key, `${(cost / 100).toFixed(2)}`);
+    this.drawManager();
+  }
+
+  private drawName(root: Vector2, jobInfo: Job<Business>): void {
+    const { nameOffset } = ELEMENT.LAYOUT;
+    const namePos = { x: root.x + nameOffset.x, y: root.y + nameOffset.y };
+    this.writeText(this.context, ELEMENT.NAME, namePos, jobInfo.name);
+  }
+
+  private drawProfit(root: Vector2, profit: string): void {
+    const { profitOffset } = ELEMENT.LAYOUT;
+    const profitPosition = { x: root.x + profitOffset.x, y: root.y + profitOffset.y };
+    this.writeText(this.context, ELEMENT.PROFIT, profitPosition, profit);
+  }
+
+  private drawBuy(root: Vector2, key: Business, cost: string): void {
+    const { buyOffset } = ELEMENT.LAYOUT;
+    const buyPos = { x: root.x + buyOffset.x, y: root.y + buyOffset.y };
+    this.writeText(this.context, ELEMENT.BUY, buyPos, cost);
+
+    const { height } = ELEMENT.BUY_SIZE;
+    const boxPos = { x: root.x + buyOffset.x + 5, y: root.y + buyOffset.y - height * 0.8 };
+    this.context.fillStyle = 'green';
+    this.context.fillRect(boxPos.x, boxPos.y, ELEMENT.BUY_SIZE.width, ELEMENT.BUY_SIZE.height);
+    this.mapBuyBox(boxPos, ELEMENT.BUY_SIZE, key);
+
+    const plusPos = { x: boxPos.x + 10, y: boxPos.y + 15 };
+    this.writeText(this.context, ELEMENT.PLUS, plusPos);
+  }
+
+  private drawManager(): void {
+    //
   }
 
   /**
-   * Maps a box to a datamanager click.
+   * Maps a box to a datamanager run click.
    * @param boxAt Point where box starts.
    * @param size Size of the box.
    * @param key Business key to map.
    */
   private mapJobBox(boxAt: Vector2, size: Size, key: Business): void {
-    const callback = () => this.dataManager.treatClick(key);
+    const callback = () => this.dataManager.treatClick(key, ButtonType.Run);
+
+    const box: BoundingBox = [boxAt, { x: boxAt.x + size.width, y: boxAt.y + size.height }];
+    const button: Button = { box, callback };
+    this.mouseTracker.addListener(button);
+  }
+
+  /**
+   * Maps a box to a datamanager buy click.
+   * @param boxAt Point where box starts.
+   * @param size Size of the box.
+   * @param key Business key to map.
+   */
+  private mapBuyBox(boxAt: Vector2, size: Size, key: Business): void {
+    const callback = () => this.dataManager.treatClick(key, ButtonType.Buy);
 
     const box: BoundingBox = [boxAt, { x: boxAt.x + size.width, y: boxAt.y + size.height }];
     const button: Button = { box, callback };
