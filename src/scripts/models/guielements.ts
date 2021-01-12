@@ -47,17 +47,17 @@ export const BUY: LabelElement = {
   align: 'right',
 };
 
+export const AUTO: LabelElement = {
+  fontSize: 16,
+  content: 'AUTO: T$',
+  align: 'center',
+};
+
 export const PLUS: LabelElement = {
   fontSize: 16,
   content: '+',
   fillStyle: 'white',
   align: 'center',
-};
-
-export const MANAGER: LabelElement = {
-  fontSize: 16,
-  content: 'AUTO: T$',
-  align: 'right',
 };
 
 export const BUTTON_SIZE: Size = {
@@ -70,9 +70,20 @@ export const BUY_SIZE: Size = {
   width: 20,
 };
 
+export const AUTO_SIZE: Size = {
+  height: 20,
+  width: 120,
+};
+
 export const BUY_COLORS: ButtonColors = {
   up: 'green',
   down: '#B4F8C8',
+  forbidden: 'gray',
+};
+
+export const AUTO_COLORS: ButtonColors = {
+  up: 'green',
+  down: '#364652',
   forbidden: 'gray',
 };
 
@@ -82,6 +93,6 @@ export const LAYOUT: ButtonLayout = {
   srcOffset: { x: 15, y: 20 },
   nameOffset: { x: 268, y: 25 },
   profitOffset: { x: 268, y: 46 },
-  buyOffset: { x: 255, y: 105 },
-  managerOffset: { x: 268, y: 66 },
+  buyOffset: { x: 125, y: 105 },
+  autoOffset: { x: 220, y: 105 },
 };

@@ -78,7 +78,7 @@ export default class DataManager {
 
     // Money making Cycle.
     const timer = time - delta;
-    playerJob.time = timer;
+    playerJob.time = Math.max(timer, 0);
     let moneyMade = 0;
 
     // If enough timer has passed,
@@ -102,23 +102,28 @@ export default class DataManager {
   /**
    * Treats a click in one of the job buttons.
    * @param key Business key of the button pressed.
+   * @param type ButtonType that was clicked.
    */
   public treatClick(key: Business, type: ButtonType): void {
     switch (type) {
       case ButtonType.Run:
-        this.run(key);
+        this.runClick(key);
         break;
       case ButtonType.Buy:
-        this.buy(key);
+        this.buyClick(key);
         break;
       case ButtonType.Auto:
-        this.auto(key);
+        this.autoClick(key);
         break;
       // no default
     }
   }
 
-  private run(key: Business): void {
+  /**
+   * Treats a click on the run area.
+   * @param key Business key of the button pressed.
+   */
+  private runClick(key: Business): void {
     const playerJob = this.playerData.jobStats[key];
     if (playerJob !== undefined) {
       const { managed, time } = playerJob;
@@ -126,7 +131,11 @@ export default class DataManager {
     }
   }
 
-  private buy(key: Business): void {
+  /**
+   * Treats a click on the buy area.
+   * @param key Business key of the button pressed.
+   */
+  private buyClick(key: Business): void {
     const playerJob = this.playerData.jobStats[key];
     const { cost } = this.availableJobs.get(key);
     const amount = playerJob === undefined ? 0 : playerJob.amount;
@@ -141,7 +150,11 @@ export default class DataManager {
     }
   }
 
-  private auto(key: Business): void {
+  /**
+   * Treats a click on the auto area.
+   * @param key Business key of the button pressed.
+   */
+  private autoClick(key: Business): void {
     const playerJob = this.playerData.jobStats[key];
 
     if (playerJob !== undefined) {

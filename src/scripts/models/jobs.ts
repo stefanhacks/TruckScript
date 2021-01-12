@@ -36,7 +36,7 @@ export function makeJob<T extends Business>(id: T): Job<T> {
   const initialPrice = 1000 + (profit * id) / 2;
   const increment = initialPrice / 2;
   const name = Business[id];
-  const auto = 2000 * id ** 2;
+  const auto = (2000 + 2000 * id ** 2) * 100;
 
   const cost = (amount: number) => initialPrice + increment * amount;
 
